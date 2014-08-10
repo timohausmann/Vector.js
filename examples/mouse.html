@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	
+	<title>Vector.js</title>
+	<meta name="description" content="https://github.com/timohausmann/Vector.js" />
+	
+	<style type="text/css">
+		body {
+			margin: 0;
+			background: #eee;
+		}
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+
+	<canvas id="canvas" width="640" height="480"></canvas>
+
+	<script src="../Vector.js"></script>
+	<script>
+
+	(function(window) {
+
+		var 	canvas = document.querySelector('#canvas'),
+			ctx = canvas.getContext('2d'),
+			mousePos,
+			myParticles = [],
+			amount = 16,
+			color = 0,
+			isMousePressed = false;
+
+		/**
+		 * return a random number within given boundaries
+		 */
+		Math.randMinMax = function(min, max, round) {
+			var val = min + (Math.random() * (max - min));
+			
+			if( round ) val = Math.round( val );
+			
+			return val;
+		};
+
+
+		/**
+		 * This is our Particle Class
+		 */
+		function Particle( x, y ) {
+
+			this.pos 		= new Vector(x, y);
+			this.velocity 		= new Vector(0,0);
+
+		};
+
+		Particle.prototype = {
+
+			//update loop 
+			update : function() {
+
+				//dir is a Vector, pointing from the
+				//particles position to the mouse position
+				var dir = mousePos.get();
+				dir.sub( this.pos );
+
+				//if the mouse is pressed, reverse dir
+				if( isMousePressed ) {
+					dir.mult( -1 );
+				}
+
+				//we want the particle to follow the mouse.
+				//before we update the particles position, 
+				//we reduce the size of dir.
+				//(If we would not do that, particles would 
+				//instantly snap to the mouse position)
+				dir.normalize();
+				dir.div( 2 );
+
+				//add dir to the particles velocity
+				this.velocity.add( dir );
+
+				//limit the velocity to a length of 10
+				this.velocity.limit( 10 );
+
+				//add velocity to particles position
+				this.pos.add( this.velocity );
+
+				this.checkEdges();
+			},
+
+			//making sure the particle doesn't get lost
+			checkEdges : function() {
+
+				if( this.pos.x > canvas.width ) this.pos.x = 0;
+				if( this.pos.x < 0 ) this.pos.x = canvas.width;
+				if( this.pos.y > canvas.height ) this.pos.y = 0;
+				if( this.pos.y < 0 ) this.pos.y = canvas.height;
+			},
+
+			//draw particle
+			draw : function( ctx ) {
+
+				ctx.fillStyle = 'hsl(' + color + ', 100%, 60%)';
+				ctx.fillRect( this.pos.x, this.pos.y, 3, 3 );
+			}
+
+		};
+
+
+		function setup() {
+
+			//set fullscreen
+			canvas.width = window.innerWidth;
+ 			canvas.height = window.innerHeight;
+
+ 			//create [amount] particles
+			for( var i=0;i<amount;i++) {
+				myParticles[i] = new Particle( 	Math.randMinMax(0,canvas.width), 
+								Math.randMinMax(0,canvas.height)  );
+			}
+
+			//lets store the mouse position in a Vector
+			mousePos = new Vector( canvas.width/2, canvas.height/2 );
+
+			//some mouse events
+			canvas.addEventListener('mousemove', function(e) {
+				mousePos.x = e.offsetX || e.layerX, 
+				mousePos.y = e.offsetY || e.layerY;
+			});
+
+			canvas.addEventListener('mousedown', function(e) {
+				isMousePressed = true;
+			});
+
+			canvas.addEventListener('mouseup', function(e) {
+				isMousePressed = false;
+			});
+		}
+
+		
+		//main loop
+		function loop() {
+
+			//erase the canvas with a semi alpha black
+			ctx.fillStyle = 'rgba(0,0,0,0.2)';
+			ctx.fillRect(0, 0, canvas.width, canvas.height );
+
+			//update and draw Particles
+			for( var i=0;i<amount;i++) {
+				myParticles[i].update();
+				myParticles[i].draw( ctx );
+			}
+
+			//update color variable
+			color += 1;
+
+			window.requestAnimationFrame( loop );
+		}
+
+		setup();
+		loop();
+
+	})(window);
+
+	</script>
+</body>
+</html>

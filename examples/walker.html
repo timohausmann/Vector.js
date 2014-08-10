@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	
+	<title>Vector.js</title>
+	<meta name="description" content="https://github.com/timohausmann/Vector.js" />
+	
+	<style type="text/css">
+		body {
+			margin: 0;
+			background: #eee;
+		}
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+
+	<canvas id="canvas" width="640" height="480"></canvas>
+
+	<script src="../Vector.js"></script>
+	<script>
+
+	(function(window) {
+
+		var 	canvas = document.querySelector('#canvas'),
+			ctx = canvas.getContext('2d'),
+
+			//size of the walker
+			size = 10,
+
+			//pos will be a Vector pointing to the current position
+			pos = new Vector(400,50),
+
+			//targetPos will be a Vector pointing to the target position
+			targetPos = new Vector(400,400);
+
+
+		function setup() {
+		
+			//set fullscreen
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		}
+
+		function loop() {
+
+			//velocity will be a Vector pointing from the current 
+			//position of the walker to the desired target position
+			var velocity = targetPos.get();
+			velocity.sub( pos );
+
+			//magnitude gives us the length of the pointing Vector,
+			//a.k.a. the actual pixel distance between the two points
+			var distance = velocity.mag();
+			
+			//scale down the velocity vector.
+			//If we would not do that, the walker would 
+			//instantly snap to the target position.
+			//By keeping the value relative to the actual 
+			//distance (just divided by 20), this also gives 
+			//us a nice easing effect
+			velocity.div( 20 );
+
+			//add the velocity to the walker
+			pos.add( velocity );
+
+			//erase canvas
+			ctx.fillStyle = 'white';
+			ctx.fillRect(0,0,canvas.width, canvas.height );
+
+			//draw a line from current position to target position
+			ctx.beginPath();
+			ctx.moveTo(pos.x, pos.y);
+			ctx.lineTo(targetPos.x, targetPos.y);
+			ctx.closePath();
+			ctx.strokeStyle = 'rgba(100,0,200, 0.5)';
+			ctx.strokeWeight = 5;
+			ctx.stroke();
+
+			//draw the rect
+			ctx.fillStyle = 'rgb(200,0,0)';
+			ctx.fillRect(pos.x-(size/2), pos.y-(size/2), size, size);
+
+			//if pos has reached targetPos, set a new random target position
+			if( distance < 1 ) {
+				targetPos = new Vector( Math.randMinMax(0,canvas.width), Math.randMinMax(0,canvas.height) );
+			}
+
+			window.requestAnimationFrame( loop );
+		}
+
+
+		/**
+		 * return a random number within given boundaries
+		 */
+		Math.randMinMax = function(min, max, round) {
+			var val = min + (Math.random() * (max - min));
+			
+			if( round ) val = Math.round( val );
+			
+			return val;
+		};
+
+		setup();
+		loop();
+
+	})(window);
+
+	</script>
+</body>
+</html>
