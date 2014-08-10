@@ -1,90 +1,127 @@
-/**
- * Vector Lib
- * @author Timo Hausmann <hello.timohausmann@gmail.com>
- * @url https://gist.github.com/timohausmann/9603675
- * @licence MIT
+/*
+ * Javascript Vector 
  * @version 1.0
+ * @author Timo Hausmann
+ * @licence MIT Licence
+ * https://github.com/timohausmann/Vector.js/
  */
-function Vector(x, y) {
+ 
+/*
+ Copyright © 2014 Timo Hausmann
 
-	this.x = x,
-	this.y = y;
-}
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-Vector.prototype = {
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
-	get : function() {
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENthis. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+(function(window, Math) {
 
-		return new Vector( this.x, this.y );
-	},
+	function Vector(x, y) {
 
-	add : function(v) {
-
-		this.x += v.x;
-		this.y += v.y;
-	},
-
-	sub : function(v) {
-
-		this.x -= v.x;
-		this.y -= v.y;
-	},
-
-	mult : function(val) {
-
-		this.x *= val;
-		this.y *= val;
-	},
-
-	div : function(val) {
-
-		this.x /= val;
-		this.y /= val;
-	},
-
-	mag : function() {
-
-		return Math.sqrt( (this.x*this.x) + (this.y*this.y) );
-	},
-
-	normalize : function() {
-
-		var mag = this.mag();
-
-		if( mag === 0 ) return;
-
-		this.div( mag );
-	},
-
-	limit : function(max) {
-
-		if( this.mag() > max ) {
-
-			this.normalize();
-			this.mult( max );
-		}
+		this.x = x,
+		this.y = y;
 	}
-};
+
+	Vector.prototype = {
+
+		get : function() {
+
+			return new Vector( this.x, this.y );
+		},
+
+		add : function(v) {
+
+			this.x += v.x;
+			this.y += v.y;
+		},
+
+		sub : function(v) {
+
+			this.x -= v.x;
+			this.y -= v.y;
+		},
+
+		mult : function(val) {
+
+			this.x *= val;
+			this.y *= val;
+		},
+
+		div : function(val) {
+
+			this.x /= val;
+			this.y /= val;
+		},
+
+		mag : function() {
+
+			return Math.sqrt( (this.x*this.x) + (this.y*this.y) );
+		},
+
+		normalize : function() {
+
+			var mag = this.mag();
+
+			if( mag === 0 ) return;
+
+			this.div( mag );
+		},
+
+		limit : function(max) {
+
+			if( this.mag() > max ) {
+
+				this.normalize();
+				this.mult( max );
+			}
+		}
+	};
 
 
-Vector.random2D = function() {
+	/**
+	 * random2D
+	 * Create a new random normalized Vector
+	 * @return Vector 	random 2D Vector
+	 */
+	Vector.random2D = function() {
 
-	var v = new Vector( -1+(Math.random()*2), -1+(Math.random()*2) );
-	v.normalize();
+		var v = new Vector( Math.randMinMax(-1,1), Math.randMinMax(-1,1) );
+		v.normalize();
 
-	return v;
-}
+		return v;
+	}
 
-Vector.degreeToVector = function(degree) {
 
-	var 	TO_RAD = Math.PI / 180,
-		v = new Vector( Math.cos(degree*TO_RAD), Math.sin(degree*TO_RAD) );
+	/**
+	 * fromDegree
+	 * Create a new normalized Vector from a degree value
+	 * @param float 	degree
+	 * @return Vector 	created Vector
+	 */
+	Vector.fromDegree = function(degree) {
 
-	v.normalize();
-	return v;
-}
+		var 	rad = degree * (Math.PI / 180),
+			v = new Vector( Math.cos(rad), Math.sin(rad) );
 
-Vector.dot = function( v1, v2 ) {
+		v.normalize();
+		return v;
+	}
 
-	return (v1.x*v2.x)+(v2.y*v2.y);
-}
+
+	window.Vector = Vector;
+
+})(window, Math);

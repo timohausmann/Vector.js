@@ -53,3 +53,6 @@ Got yourself a Vector? This is what you can do with it:
 **Normalize** (scaling the Vector to a length of 1)
 
     myVector.normalize();
+
+
+Copyright © 2014 Timo Hausmann | [MIT License](http://opensource.org/licenses/mit-license.php)
