@@ -3,28 +3,20 @@
 <head>
 	<meta charset="utf-8" />
 	
-	<title>Vector.js</title>
-	<meta name="description" content="https://github.com/timohausmann/Vector.js" />
-	
-	<style type="text/css">
-		body {
-			margin: 0;
-			background: #eee;
-		}
-		canvas {
-			display: block;
-			margin: 0 auto;
-		}
-	</style>
+	<title>Vector.js – Walker</title>
+	<link rel="stylesheet" href="assets/examples.css" />
+	<link rel="stylesheet" href="assets/prism.css" />
 </head>
 <body>
 
-	<canvas id="canvas" width="640" height="480"></canvas>
+	<h1>Vector.js – Walker</h1>
+
+	<canvas id="canvas" width="1024" height="640"></canvas>
 
 	<script src="../Vector.js"></script>
-	<script>
+	<script id="code">
 
-	(function(window) {
+	(function(document, window, Math) {
 
 		var 	canvas = document.querySelector('#canvas'),
 			ctx = canvas.getContext('2d'),
@@ -42,8 +34,8 @@
 		function setup() {
 		
 			//set fullscreen
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
+			//canvas.width = window.innerWidth;
+			//canvas.height = window.innerHeight;
 		}
 
 		function loop() {
@@ -108,8 +100,18 @@
 		setup();
 		loop();
 
-	})(window);
+	})(document, window, Math);
 
+	</script>
+
+	<h2>The Code</h2>
+	<pre><code class="language-javascript" id="prism"></code></pre>
+
+	<a class="linkback" href="https://github.com/timohausmann/Vector.js">Vector.js at GitHub</a>
+
+	<script src="assets/prism.js"></script>
+	<script>
+		document.querySelector('#prism').innerHTML = document.querySelector('#code').innerHTML.replace(/</g,'&lt;');
 	</script>
 </body>
 </html>

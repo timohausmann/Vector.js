@@ -1,0 +1,40 @@
+body {
+	margin: 0 auto;
+	max-width: 1024px;
+	text-align: center;
+	font-family: sans-serif;
+}
+
+ul {
+	padding-left: 0;
+	list-style-position: inside;
+}
+li {
+	
+	margin-bottom: 0.3em;
+}
+
+.index {
+	padding: 100px;
+	text-align: left;
+}
+
+#canvas {
+	display: block;
+	margin: 0 auto 2em;
+	border: 1px solid #ddd;
+}
+
+.linkback {
+	display: inline-block;
+	margin: 2em 0;
+	color: #333;
+}
+
+.instruction {
+	margin: 0 auto 2em;
+	border-radius: 8px;
+	background: #eee;
+	padding: 8px;
+}
+

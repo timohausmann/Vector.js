@@ -3,28 +3,23 @@
 <head>
 	<meta charset="utf-8" />
 	
-	<title>Vector.js</title>
-	<meta name="description" content="https://github.com/timohausmann/Vector.js" />
-	
-	<style type="text/css">
-		body {
-			margin: 0;
-			background: #eee;
-		}
-		canvas {
-			display: block;
-			margin: 0 auto;
-		}
-	</style>
+	<title>Vector.js – Mouse</title>
+	<link rel="stylesheet" href="assets/examples.css" />
+	<link rel="stylesheet" href="assets/prism.css" />
 </head>
 <body>
 
-	<canvas id="canvas" width="640" height="480"></canvas>
+	<h1>Vector.js – Mouse</h1>
+
+	<canvas id="canvas" width="1024" height="640"></canvas>
+	<div class="instruction">
+		Move your mouse on the canvas. Click to reverse velocities.
+	</div>
 
 	<script src="../Vector.js"></script>
-	<script>
+	<script id="code">
 
-	(function(window) {
+	(function(document, window, Math) {
 
 		var 	canvas = document.querySelector('#canvas'),
 			ctx = canvas.getContext('2d'),
@@ -33,17 +28,6 @@
 			amount = 16,
 			color = 0,
 			isMousePressed = false;
-
-		/**
-		 * return a random number within given boundaries
-		 */
-		Math.randMinMax = function(min, max, round) {
-			var val = min + (Math.random() * (max - min));
-			
-			if( round ) val = Math.round( val );
-			
-			return val;
-		};
 
 
 		/**
@@ -54,8 +38,7 @@
 		function Particle( x, y ) {
 
 			this.pos 		= new Vector(x, y);
-			this.velocity 		= new Vector(0,0);
-
+			this.velocity 		= new Vector(0, 0);
 		};
 
 		Particle.prototype = {
@@ -116,7 +99,6 @@
 				if( this.pos.y > canvas.height ) this.pos.y = 0;
 				if( this.pos.y < 0 ) this.pos.y = canvas.height;
 			}
-
 		};
 
 
@@ -126,8 +108,8 @@
 		function setup() {
 
 			//set fullscreen
-			canvas.width = window.innerWidth;
- 			canvas.height = window.innerHeight;
+			//canvas.width = window.innerWidth;
+ 			//canvas.height = window.innerHeight;
 
  			//create [amount] particles
 			for( var i=0;i<amount;i++) {
@@ -175,11 +157,32 @@
 			window.requestAnimationFrame( loop );
 		}
 
+		/**
+		 * return a random number within given boundaries
+		 */
+		Math.randMinMax = function(min, max, round) {
+			var val = min + (Math.random() * (max - min));
+			
+			if( round ) val = Math.round( val );
+			
+			return val;
+		};
+
 		setup();
 		loop();
 
-	})(window);
+	})(document, window, Math);
 
+	</script>
+
+	<h2>The Code</h2>
+	<pre><code class="language-javascript" id="prism"></code></pre>
+
+	<a class="linkback" href="https://github.com/timohausmann/Vector.js">Vector.js at GitHub</a>
+
+	<script src="assets/prism.js"></script>
+	<script>
+		document.querySelector('#prism').innerHTML = document.querySelector('#code').innerHTML.replace(/</g,'&lt;');
 	</script>
 </body>
 </html>

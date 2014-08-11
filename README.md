@@ -2,6 +2,8 @@
 A Javascript Implementation of a simple 2D Vector Class, just the basics.  
 This is strongly inspired by Daniel Shiffmans awesome Book [The Nature Of Code](http://natureofcode.com/book/chapter-1-vectors/). Check it out if you want to learn more about vectors.
 
+To see some possible applications, take a look inside the examples folder or visit the [Examples Demo Page](http://timohausmann.de/vector.js/examples/).
+
 ## Creation
 
 There are various ways to create a new Vector:
