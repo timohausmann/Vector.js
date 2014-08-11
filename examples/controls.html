@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	
+	<title>Vector.js</title>
+	<meta name="description" content="https://github.com/timohausmann/Vector.js" />
+	
+	<style type="text/css">
+		body {
+			margin: 0;
+			background: #eee;
+		}
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+
+
+	<canvas id="canvas" width="640" height="480"></canvas>
+
+	<script src="../Vector.js"></script>
+	<script>
+
+	(function () { 
+
+		var 	canvas = document.querySelector('#canvas'),
+			ctx = canvas.getContext('2d'),
+			player;
+
+
+		/**
+		 * this is our Object Class,
+		 * a.k.a. our "hero" in this example
+		 * @param float x 	X-Position
+		 * @param float y 	Y-Position
+		 */
+		function Obj( x, y ) {
+
+			this.pos 		= new Vector(x, y);
+			this.size 		= 24;
+			this.degree		= 0;
+			this.direction 		= new Vector(0,0);
+			this.velocity 		= new Vector(0,0);
+		};
+
+		Obj.prototype = {
+
+			/**
+			 * update loop
+			 * recalculate position
+			 */
+			update : function() {
+
+				//acceleration will be the current direction Vector.
+				//The direction Vector will be -1, 0 or 1 for each direction
+				var acceleration = this.direction.get();
+
+				//add acceleration to velocity
+				this.velocity.add( acceleration );
+				this.velocity.limit( 10 );
+
+				//add velocity to current position
+				this.pos.add( this.velocity );
+				this.checkEdges();
+
+				//this makes sure that the object slows down 
+				//when no new acceleration is applied to the velocity
+				this.velocity.mult(0.9);
+			},
+
+			/**
+			 * draw loop
+			 */
+			draw : function( ctx ) {
+
+				var 	velocity = this.velocity.get(),
+					halfSize = this.size/2;
+
+				ctx.save();
+				ctx.translate(this.pos.x, this.pos.y);
+
+				//this piece of code is just for demonstration:
+				//draw the current velocity Vector as a red line (4 times size)
+				velocity.mult(4);
+				ctx.beginPath();
+				ctx.moveTo(0, 0);
+				ctx.lineTo(velocity.x,velocity.y);
+				ctx.closePath();
+				ctx.strokeStyle = 'red';
+				ctx.stroke();
+
+				//draw the actual object
+				ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+				ctx.strokeRect( -halfSize , -halfSize, this.size, this.size );
+
+				ctx.restore();
+			},
+
+			/**
+			 * go
+			 * set movement of the object for one or both axis
+			 * you could technically stop
+			 * @param int x 	-1 for left or 1 for right, undefined to ignore
+			 * @param int y 	-1 for up or 1 for down, undefined to ignore
+			 */
+			go: function( x, y ) {
+
+				this.direction.x = x || this.direction.x;
+				this.direction.y = y || this.direction.y;
+			},
+
+			/**
+			 * stop
+			 * stop movement of the object for one or both axis
+			 * @param boolean isX 	true, to stop X movement
+			 * @param boolean isY 	true, to stop Y movement
+			 */
+			stop: function( isX, isY ) {
+
+				if( isX ) this.direction.x = 0;
+				if( isY ) this.direction.y = 0;
+			},
+
+			/**
+			 * checkEdges
+			 * making sure the object doesn't get lost
+			 */
+			checkEdges : function() {
+
+				if( this.pos.x < 0 ) this.pos.x = canvas.width;
+				if( this.pos.x > canvas.width ) this.pos.x = 0;
+				if( this.pos.y > canvas.height ) this.pos.y = 0;
+				if( this.pos.y < 0 ) this.pos.y = canvas.height;
+			}
+		};
+
+
+		/**
+		 * listen to keydown
+		 * start player movement
+		 */
+		document.addEventListener('keydown', function(e) {
+
+			var keycode = e.keyCode;
+
+			if( isKey('left', keycode) ) {
+				player.go(-1, undefined);
+			} else if( isKey('right', keycode) ) {
+				player.go(1, undefined);			
+			} else if( isKey('up', keycode) ) {
+				player.go(undefined, -1);
+			} else if( isKey('down', keycode) ) {
+				player.go(undefined, 1);
+			}
+		});
+
+		/**
+		 * listen to keyup
+		 * stop player movement
+		 */
+		document.addEventListener('keyup', function(e) {
+
+			var keycode = e.keyCode;
+
+			if( isKey('left', keycode) ) {
+				player.stop(true, false);
+			} else if( isKey('right', keycode) ) {
+				player.stop(true, false);			
+			} else if( isKey('up', keycode) ) {
+				player.stop(false, true);			
+			} else if( isKey('down', keycode) ) {
+				player.stop(false, true);			
+			}
+		});
+
+
+		/**
+		 * setup stuff
+		 */
+		function setup() {
+
+			//set fullscreen
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			//create our grand hero
+			player = new Obj( 	canvas.width/2, 
+						canvas.height/2);
+		}
+
+
+		/**
+		 * main loop
+		 */
+		function loop() {
+
+			ctx.fillStyle = 'rgba(0,0,0,1)';
+			ctx.fillRect(0, 0, canvas.width, canvas.height );
+
+			player.update();
+			player.draw( ctx );
+
+			window.requestAnimationFrame( loop );
+		}
+
+
+		/**
+		 * isKey
+		 * @param String name		keyname to check for
+		 * @param int keyCode 		pressed keyCode
+		 * @return boolean 		true, if keyname matches keycode
+		 */
+		function isKey( name, keyCode ) {
+
+			var keymap = {
+				left : [37, 65], //left, A
+				right : [39, 68], //right, D
+				up: [32, 38, 87], //space, up, W
+				down: [40, 83], //down, s
+				enter: [13], //enter
+				escape: [27] //esc
+			};
+
+			return ( keymap[ name ].indexOf( keyCode ) === -1 ) ? false : true;
+		}
+
+		setup();
+		loop();
+
+	})();
+
+	</script>
+
+</body>
+</html>

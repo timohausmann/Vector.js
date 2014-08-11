@@ -48,6 +48,8 @@
 
 		/**
 		 * This is our Particle Class
+		 * @param float x 	X-Position
+		 * @param float y 	Y-Position
 		 */
 		function Particle( x, y ) {
 
@@ -58,7 +60,10 @@
 
 		Particle.prototype = {
 
-			//update loop 
+			/**
+			 * update loop
+			 * recalculate position
+			 */
 			update : function() {
 
 				//dir is a Vector, pointing from the
@@ -91,25 +96,33 @@
 				this.checkEdges();
 			},
 
-			//making sure the particle doesn't get lost
+			/**
+			 * draw loop
+			 */
+			draw : function( ctx ) {
+
+				ctx.fillStyle = 'hsl(' + color + ', 100%, 60%)';
+				ctx.fillRect( this.pos.x, this.pos.y, 3, 3 );
+			},
+
+			/**
+			 * checkEdges
+			 * making sure the object doesn't get lost
+			 */
 			checkEdges : function() {
 
 				if( this.pos.x > canvas.width ) this.pos.x = 0;
 				if( this.pos.x < 0 ) this.pos.x = canvas.width;
 				if( this.pos.y > canvas.height ) this.pos.y = 0;
 				if( this.pos.y < 0 ) this.pos.y = canvas.height;
-			},
-
-			//draw particle
-			draw : function( ctx ) {
-
-				ctx.fillStyle = 'hsl(' + color + ', 100%, 60%)';
-				ctx.fillRect( this.pos.x, this.pos.y, 3, 3 );
 			}
 
 		};
 
 
+		/**
+		 * setup stuff
+		 */
 		function setup() {
 
 			//set fullscreen
@@ -141,7 +154,9 @@
 		}
 
 		
-		//main loop
+		/**
+		 * main loop
+		 */
 		function loop() {
 
 			//erase the canvas with a semi alpha black
